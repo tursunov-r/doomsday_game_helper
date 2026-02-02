@@ -65,9 +65,17 @@ async def set_fidelity(callback: types.CallbackQuery, state: FSMContext):
     role.add(data["role_cart"])
     role.add(data["fidelity_cart_1"])
     role.add(data["fidelity_cart_2"])
-    program_fidelity = data.get("program_fidelity")
-    if program_fidelity and program_fidelity in VALID_FIDELITY:
-        role.add(program_fidelity)
+
+    programs = data.get("program_fidelity", [])
+    if programs:
+        for p in programs:  # добавляем все карты программы в RoleDefinition
+            role.add(p)
+        programs_text = "Программы верности: " + ", ".join(
+            translate(p) for p in programs if translate(p)
+        )
+    else:
+        programs_text = ""
+
     photo = FSInputFile(get_pictures(role.get_role))
     await callback.message.answer_photo(
         photo=photo,
@@ -76,6 +84,7 @@ async def set_fidelity(callback: types.CallbackQuery, state: FSMContext):
             f"Роль: {translate(data['role_cart'])}\n"
             f"Верность: 1 - {translate(data['fidelity_cart_1'])}, "
             f"2 - {translate(data['fidelity_cart_2'])}\n"
+            f"{programs_text}\n"
             f"Команда: {translate(role.get_role)}\n"
             f"Цель: {mission(role.get_role)}"
         ),
@@ -99,7 +108,48 @@ async def program_fidelity(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer("")
     await callback.message.delete()
     await callback.message.answer(
-        f"Укажите карту верности в программе", reply_markup=kb.fidelity_cart_keyboard()
+        "Укажите карту верности в программе", reply_markup=kb.fidelity_cart_keyboard()
     )
-    await state.update_data(program_fidelity=callback.data)
-    await state.set_state(RoleState.fidelity_2)
+    # переводим в новое состояние выбора карты программы
+    await state.set_state(RoleState.program_fidelity)
+
+
+@router.callback_query(RoleState.program_fidelity, F.data.in_(VALID_FIDELITY))
+async def add_program_fidelity(callback: types.CallbackQuery, state: FSMContext):
+    await callback.answer("")
+    data = await state.get_data()
+    programs = data.get("program_fidelity", [])
+    if not isinstance(programs, list):
+        programs = []
+    programs.append(callback.data)
+    await state.update_data(program_fidelity=programs)
+
+    # формируем роль заново
+    role = RoleDefinition()
+    role.add(data["role_cart"])
+    role.add(data["fidelity_cart_1"])
+    role.add(data["fidelity_cart_2"])
+    for p in programs:
+        role.add(p)
+
+    programs_text = "Программы верности: " + ", ".join(
+        translate(p) for p in programs if translate(p)
+    )
+
+    photo = FSInputFile(get_pictures(role.get_role))
+    await callback.message.delete()
+    await callback.message.answer_photo(
+        photo=photo,
+        caption=(
+            f"Ваши карты:\n"
+            f"Роль: {translate(data['role_cart'])}\n"
+            f"Верность: 1 - {translate(data['fidelity_cart_1'])}, "
+            f"2 - {translate(data['fidelity_cart_2'])}\n"
+            f"{programs_text}\n"
+            f"Команда: {translate(role.get_role)}\n"
+            f"Цель: {mission(role.get_role)}"
+        ),
+        reply_markup=kb.in_play_replace_role(),
+    )
+
+    await state.set_state(RoleState.return_role)

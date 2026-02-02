@@ -1,8 +1,11 @@
+from app.utils.translate import translate
+
+
 class RoleDefinition:
     def __init__(self):
         self.__carts = []
 
-    def add(self, cart):
+    def add(self, cart: str):
         self.__carts.append(cart)
 
     def __clear(self):
@@ -29,3 +32,22 @@ class RoleDefinition:
             return "outcast"
         else:
             return "outcast"
+
+    def get_fidelity_cards(self) -> list[str]:
+        """Вернуть список всех карт верности (без роли)."""
+        fidelity_keys = {
+            "people",
+            "people_x2",
+            "machine",
+            "machine_x2",
+            "outcast",
+            "outcast_x2",
+        }
+        return [c for c in self.__carts if c in fidelity_keys]
+
+    def fidelity_text(self) -> str:
+        """Вернуть строку со всеми картами верности, переведёнными."""
+        cards = self.get_fidelity_cards()
+        if not cards:
+            return "Нет карт верности"
+        return ", ".join(translate(c) for c in cards if translate(c))
