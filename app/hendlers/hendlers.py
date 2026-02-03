@@ -1,6 +1,6 @@
 from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
-from aiogram.types import FSInputFile, message
+from aiogram.types import FSInputFile
 
 from app.keyboards import role_buttons_builder as kb
 from app.states.role_state import RoleState
@@ -32,10 +32,9 @@ async def set_role_cart(message: types.Message, state: FSMContext):
 
 @router.callback_query(RoleState.role_cart)
 async def set_role(callback: types.CallbackQuery, state: FSMContext):
+    await callback.message.delete()
     await callback.answer(f"")
-    await callback.bot.edit_message_text(
-        chat_id=callback.message.chat.id,
-        message_id=callback.message.message_id,
+    await callback.message.answer(
         text=f"Укажите карту верности:",
         reply_markup=kb.fidelity_cart_keyboard(),
     )
@@ -57,6 +56,7 @@ async def set_fidelity(callback: types.CallbackQuery, state: FSMContext):
 
 @router.callback_query(RoleState.fidelity_2, F.data.in_(VALID_FIDELITY))
 async def set_fidelity(callback: types.CallbackQuery, state: FSMContext):
+    await callback.message.delete()
     await callback.answer("")
     await state.update_data(fidelity_cart_2=callback.data)
     await state.set_state(RoleState.return_role)
@@ -84,7 +84,7 @@ async def set_fidelity(callback: types.CallbackQuery, state: FSMContext):
             f"Роль: {translate(data['role_cart'])}\n"
             f"Верность: 1 - {translate(data['fidelity_cart_1'])}, "
             f"2 - {translate(data['fidelity_cart_2'])}\n"
-            f"{programs_text}\n"
+            f"{programs_text}\n\n"
             f"Команда: {translate(role.get_role)}\n"
             f"Цель: {mission(role.get_role)}"
         ),
@@ -145,7 +145,40 @@ async def add_program_fidelity(callback: types.CallbackQuery, state: FSMContext)
             f"Роль: {translate(data['role_cart'])}\n"
             f"Верность: 1 - {translate(data['fidelity_cart_1'])}, "
             f"2 - {translate(data['fidelity_cart_2'])}\n"
-            f"{programs_text}\n"
+            f"{programs_text}\n\n"
+            f"Команда: {translate(role.get_role)}\n"
+            f"Цель: {mission(role.get_role)}"
+        ),
+        reply_markup=kb.if_set_fidelity(),
+    )
+
+    await state.set_state(RoleState.return_role)
+
+
+@router.callback_query(F.data == "program_fidelity_remove")
+async def remove_fidelity_program(callback: types.CallbackQuery, state: FSMContext):
+    await callback.message.delete()
+    await callback.answer("")
+    await state.update_data(program_fidelity=[])
+
+    data = await state.get_data()
+    role = RoleDefinition()
+    role.add(data["role_cart"])
+    role.add(data["fidelity_cart_1"])
+    role.add(data["fidelity_cart_2"])
+
+    # пересобираем роль без программ
+    programs_text = "Программы верности: отсутствуют"
+
+    photo = FSInputFile(get_pictures(role.get_role))
+    await callback.message.answer_photo(
+        photo=photo,
+        caption=(
+            f"Ваши карты:\n"
+            f"Роль: {translate(data['role_cart'])}\n"
+            f"Верность: 1 - {translate(data['fidelity_cart_1'])}, "
+            f"2 - {translate(data['fidelity_cart_2'])}\n"
+            f"{programs_text}\n\n"
             f"Команда: {translate(role.get_role)}\n"
             f"Цель: {mission(role.get_role)}"
         ),

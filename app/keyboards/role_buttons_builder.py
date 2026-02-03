@@ -50,3 +50,15 @@ def in_play_replace_role():
     for button in buttons:
         keyboard.add(InlineKeyboardButton(text=button[0], callback_data=button[1]))
     return keyboard.adjust(1).as_markup()
+
+
+def if_set_fidelity():
+    buttons = (
+        ("Смена верности", "change_fidelity"),
+        ("Программа верности", "program_fidelity"),
+        ("Сбросить программы", "program_fidelity_remove"),
+    )
+    keyboard = InlineKeyboardBuilder()
+    for button in buttons:
+        keyboard.add(InlineKeyboardButton(text=button[0], callback_data=button[1]))
+    return keyboard.adjust(1).as_markup()

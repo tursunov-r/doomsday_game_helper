@@ -3,6 +3,7 @@ import types
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import CommandStart
+from aiogram.fsm.context import FSMContext
 
 from app.configs.config import BOT_TOKEN
 from app.keyboards import role_buttons_builder as kb
