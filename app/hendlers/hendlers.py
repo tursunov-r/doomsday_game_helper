@@ -32,6 +32,7 @@ async def set_role_cart(message: types.Message, state: FSMContext):
     for msg_id in bot_messages:
         try:
             await message.bot.delete_message(chat_id=message.chat.id, message_id=msg_id)
+            await state.clear()
         except Exception as e:
             print(f"Не удалось удалить сообщение {msg_id}: {e}")
 
@@ -46,7 +47,6 @@ async def set_role_cart(message: types.Message, state: FSMContext):
     # сохраняем id нового сообщения
     await state.update_data(bot_messages=[sent.message_id])
     await state.set_state(RoleState.role_cart)
-    await state.clear()
 
 
 @router.callback_query(RoleState.role_cart)
