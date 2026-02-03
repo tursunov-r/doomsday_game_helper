@@ -102,12 +102,14 @@ async def set_fidelity_2(callback: types.CallbackQuery, state: FSMContext):
     photo = FSInputFile(get_pictures(role.get_role))
     sent = await callback.message.answer_photo(
         photo=photo,
-        caption=(f"{role.get_message(
-                role=data['role_cart'],
-                fidelity_1=data['fidelity_cart_1'],
-                fidelity_2=data['fidelity_cart_2'],
+        caption=(
+            role.get_message(
+                role=data["role_cart"],
+                fidelity_1=data["fidelity_cart_1"],
+                fidelity_2=data["fidelity_cart_2"],
                 program=programs_text,
-            )}"),
+            )
+        ),
         reply_markup=kb.in_play_replace_role(),
     )
     await bot_delete_message(state, sent)
@@ -167,12 +169,14 @@ async def add_program_fidelity(
     await callback.message.delete()
     sent = await callback.message.answer_photo(
         photo=photo,
-        caption=(f"{role.get_message(
-                role=data['role_cart'],
-                fidelity_1=data['fidelity_cart_1'],
-                fidelity_2=data['fidelity_cart_2'],
+        caption=(
+            role.get_message(
+                role=data["role_cart"],
+                fidelity_1=data["fidelity_cart_1"],
+                fidelity_2=data["fidelity_cart_2"],
                 program=programs_text,
-            )}"),
+            )
+        ),
         reply_markup=kb.if_set_fidelity(),
     )
 
@@ -200,12 +204,14 @@ async def remove_fidelity_program(
     photo = FSInputFile(get_pictures(role.get_role))
     sent = await callback.message.answer_photo(
         photo=photo,
-        caption=(f"{role.get_message(
-                role=data['role_cart'],
-                fidelity_1=data['fidelity_cart_1'],
-                fidelity_2=data['fidelity_cart_2'],
+        caption=(
+            role.get_message(
+                role=data["role_cart"],
+                fidelity_1=data["fidelity_cart_1"],
+                fidelity_2=data["fidelity_cart_2"],
                 program=programs_text,
-            )}"),
+            )
+        ),
         reply_markup=kb.in_play_replace_role(),
     )
 

@@ -12,6 +12,3 @@ def translate(data: str) -> str:
     }
 
     return translate[data] if data in translate.keys() else None
-
-
-print(translate("people_x2"))
