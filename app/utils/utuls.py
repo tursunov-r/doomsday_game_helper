@@ -1,11 +1,12 @@
 from app.utils.translate import translate
+from app.utils.mission import mission
 
 
 class RoleDefinition:
     def __init__(self):
         self.__carts = []
 
-    def add(self, cart: str):
+    def add_cart(self, cart: str):
         self.__carts.append(cart)
 
     def __clear(self):
@@ -16,7 +17,6 @@ class RoleDefinition:
         people = self.__carts.count("people") + (self.__carts.count("people_x2") * 2)
         machine = self.__carts.count("machine") + (self.__carts.count("machine_x2") * 2)
         outcast = self.__carts.count("outcast") + (self.__carts.count("outcast_x2") * 2)
-        print(people, machine, outcast)
 
         if "always_people" in self.__carts:
             return "people"
@@ -51,3 +51,14 @@ class RoleDefinition:
         if not cards:
             return "Нет карт верности"
         return ", ".join(translate(c) for c in cards if translate(c))
+
+    def get_message(self, role, fidelity_1, fidelity_2, program):
+        return (
+            f"Ваши карты:\n"
+            f"Роль: {translate(role)}\n"
+            f"Верность: 1 - {translate(fidelity_1)}, "
+            f"2 - {translate(fidelity_2)}\n"
+            f"{program}\n\n"
+            f"Команда: {translate(self.get_role)}\n"
+            f"Цель: {mission(self.get_role)}"
+        )
