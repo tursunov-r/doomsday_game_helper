@@ -1,8 +1,3 @@
-from typing import Dict
-
-from aiogram.dispatcher.middlewares import data
-
-
 def translate(data: str) -> str:
     translate = {
         "people": "Человек",

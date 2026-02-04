@@ -1,9 +1,7 @@
 import asyncio
-import types
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import CommandStart
-from aiogram.fsm.context import FSMContext
 
 from app.configs.config import BOT_TOKEN
 from app.keyboards import role_buttons_builder as kb
@@ -19,7 +17,11 @@ routers = [
 @dp.message(CommandStart())
 async def start(message: types.Message):
     await message.answer(
-        'Здравствуйте! Я Ваш персональный помощник по игре "Судный день"\n',
+        'Здравствуйте! Я Ваш персональный помощник по игре "Судный день"\n'
+        "В я могу помочь Вам посчитать ваши карты верности и роли"
+        "что бы определить на чьей стороне вы играете и вам не пришлось"
+        "считать все это в голове.\n"
+        "Вы можете спокойно продолжать наслаждаться игрой",
         reply_markup=kb.main_keyboard(),
     )
 

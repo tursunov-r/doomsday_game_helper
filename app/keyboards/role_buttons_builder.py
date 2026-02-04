@@ -22,7 +22,9 @@ def role_cart_keyboard():
     )
     keyboard = InlineKeyboardBuilder()
     for button in buttons:
-        keyboard.add(InlineKeyboardButton(text=button[0], callback_data=button[1]))
+        keyboard.add(
+            InlineKeyboardButton(text=button[0], callback_data=button[1])
+        )
     return keyboard.adjust(2).as_markup()
 
 
@@ -37,7 +39,9 @@ def fidelity_cart_keyboard():
     )
     keyboard = InlineKeyboardBuilder()
     for button in buttons:
-        keyboard.add(InlineKeyboardButton(text=button[0], callback_data=button[1]))
+        keyboard.add(
+            InlineKeyboardButton(text=button[0], callback_data=button[1])
+        )
     return keyboard.adjust(3).as_markup()
 
 
@@ -48,7 +52,9 @@ def in_play_replace_role():
     )
     keyboard = InlineKeyboardBuilder()
     for button in buttons:
-        keyboard.add(InlineKeyboardButton(text=button[0], callback_data=button[1]))
+        keyboard.add(
+            InlineKeyboardButton(text=button[0], callback_data=button[1])
+        )
     return keyboard.adjust(1).as_markup()
 
 
@@ -60,5 +66,7 @@ def if_set_fidelity():
     )
     keyboard = InlineKeyboardBuilder()
     for button in buttons:
-        keyboard.add(InlineKeyboardButton(text=button[0], callback_data=button[1]))
+        keyboard.add(
+            InlineKeyboardButton(text=button[0], callback_data=button[1])
+        )
     return keyboard.adjust(1).as_markup()

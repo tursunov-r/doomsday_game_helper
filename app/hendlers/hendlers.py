@@ -31,7 +31,9 @@ async def set_role_cart(message: types.Message, state: FSMContext):
     # удаляем их
     for msg_id in bot_messages:
         try:
-            await message.bot.delete_message(chat_id=message.chat.id, message_id=msg_id)
+            await message.bot.delete_message(
+                chat_id=message.chat.id, message_id=msg_id
+            )
             await state.clear()
         except Exception as e:
             print(f"Не удалось удалить сообщение {msg_id}: {e}")
@@ -52,9 +54,9 @@ async def set_role_cart(message: types.Message, state: FSMContext):
 @router.callback_query(RoleState.role_cart)
 async def set_role(callback: types.CallbackQuery, state: FSMContext):
     await callback.message.delete()
-    await callback.answer(f"")
+    await callback.answer("")
     sent = await callback.message.answer(
-        text=f"Укажите карту верности:",
+        text="Укажите карту верности:",
         reply_markup=kb.fidelity_cart_keyboard(),
     )
     await state.update_data(role_cart=callback.data)
@@ -67,7 +69,7 @@ async def set_fidelity(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer("")
     await callback.message.delete()
     sent = await callback.message.answer(
-        f"Укажите вторую карту верности",
+        "Укажите вторую карту верности",
         reply_markup=kb.fidelity_cart_keyboard(),
     )
     await state.update_data(fidelity_cart_1=callback.data)
@@ -76,7 +78,7 @@ async def set_fidelity(callback: types.CallbackQuery, state: FSMContext):
 
 
 @router.callback_query(RoleState.fidelity_2, F.data.in_(VALID_FIDELITY))
-async def set_fidelity(callback: types.CallbackQuery, state: FSMContext):
+async def set_fidelity_2(callback: types.CallbackQuery, state: FSMContext):
     await callback.message.delete()
     await callback.answer("")
     await state.update_data(fidelity_cart_2=callback.data)
@@ -116,7 +118,8 @@ async def change_fidelity(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer("")
     await callback.message.delete()
     sent = await callback.message.answer(
-        "Укажите первую карту верности", reply_markup=kb.fidelity_cart_keyboard()
+        "Укажите первую карту верности",
+        reply_markup=kb.fidelity_cart_keyboard(),
     )
 
     await state.set_state(RoleState.fidelity_1)
@@ -128,7 +131,8 @@ async def program_fidelity(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer("")
     await callback.message.delete()
     sent = await callback.message.answer(
-        "Укажите карту верности в программе", reply_markup=kb.fidelity_cart_keyboard()
+        "Укажите карту верности в программе",
+        reply_markup=kb.fidelity_cart_keyboard(),
     )
     # переводим в новое состояние выбора карты программы
     await state.set_state(RoleState.program_fidelity)
@@ -136,7 +140,9 @@ async def program_fidelity(callback: types.CallbackQuery, state: FSMContext):
 
 
 @router.callback_query(RoleState.program_fidelity, F.data.in_(VALID_FIDELITY))
-async def add_program_fidelity(callback: types.CallbackQuery, state: FSMContext):
+async def add_program_fidelity(
+    callback: types.CallbackQuery, state: FSMContext
+):
     await callback.answer("")
     data = await state.get_data()
     programs = data.get("program_fidelity", [])
@@ -175,7 +181,9 @@ async def add_program_fidelity(callback: types.CallbackQuery, state: FSMContext)
 
 
 @router.callback_query(F.data == "program_fidelity_remove")
-async def remove_fidelity_program(callback: types.CallbackQuery, state: FSMContext):
+async def remove_fidelity_program(
+    callback: types.CallbackQuery, state: FSMContext
+):
     await callback.message.delete()
     await callback.answer("")
     await state.update_data(program_fidelity=[])
